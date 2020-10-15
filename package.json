@@ -10,11 +10,10 @@
   },
   "scripts": {
     "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "dev:start": "npm run dev:build",
-    "dev:build": "npm ci && npx shadow-cljs compile electron",
-    "dev:watch": "npx shadow-cljs watch electron",
+    "pack": "npx electron-builder --dir",
+    "dist": "npx electron-builder",
+    "dev:build": "npm ci && npx shadow-cljs compile desktopapp",
+    "dev:watch": "npx shadow-cljs watch desktopapp",
     "dev:clean": "rm -dfR node_modules/ public/js/* public/cljs-runtime"
   },
   "build": {

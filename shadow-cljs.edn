@@ -21,26 +21,35 @@
 
   ;; Dev dependencies
   ^:dev [binaryage/devtools "1.0.2"]
-  ^:dev [djblue/portal "0.4.0"]
-  ]
+  ^:dev [djblue/portal "0.4.0"]]
 
- :builds
- ;; Electron app
- {:electron {:target :node-script
-            ;;  :devtools {:ignore-warnings true
-            ;;             ;; :before-load oc.web.core/on-js-reload
-            ;;             :repl-pprint true
-            ;;             :repl-init-ns oc.electron.main}
-            ;;  :modules {:oc {:init-fn oc.electron.main/init}}
-             :repl-pprint true
-             :compiler-options {:infer-externs :auto}
-             :output-to "index.js"
-             :output-dir "public"
-             :asset-path "js/"
-             :main oc.electron.main/init
-             :entries [oc.electron.main]
-
-             :release {:compiler-options {:optimizations :advanced
-                                          :source-map true
-                                          :source-map-include-sources-content true
-                                          :source-map-detail-level :symbols}}}}}
+ :builds ;; Electron app
+ {:desktopapp {:target :node-script
+               :devtools {:ignore-warnings true
+                              ;; :before-load oc.web.core/on-js-reload
+                          :repl-pprint true
+                          :repl-init-ns oc.electron.main}
+                  ;;  :modules {:oc {:init-fn oc.electron.main/init}}
+               :dev {:compiler-options {:optimizations :advanced
+                                        :source-map true
+                                        :source-map-include-sources-content true
+                                        :source-map-detail-level :simple
+                                        :closure-defines {oc.electron.main/dev?        true
+                                                          oc.electron.main/web-origin  "http://localhost:3559"
+                                                          oc.electron.main/auth-origin "http://localhost:3003"
+                                                          oc.electron.main/sentry-dsn  "https://ecf4ef8092ae4638bf56c0cfa6d50bb0@o23653.ingest.sentry.io/4944452"}}}
+               :repl-pprint true
+               :compiler-options {:infer-externs :auto
+                                  :closure-defines {oc.electron.main/dev? false}}
+               :output-to "index.js"
+               :output-dir "public"
+               :asset-path "js/"
+               :main oc.electron.main/init
+               :entries [oc.electron.main]
+               :release {:compiler-options {:optimizations :advanced
+                                            :source-map true
+                                            :source-map-include-sources-content true
+                                            :source-map-detail-level :symbols
+                                            :closure-defines {oc.electron.main/web-origin  "https://staging.carrot.io"
+                                                              oc.electron.main/auth-origin "https://staging-auth.carrot.io"
+                                                              oc.electron.main/sentry-dsn  "https://d4318ef3fbba49668211f37c56157a19@sentry.io/1509179"}}}}}}

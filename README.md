@@ -27,17 +27,18 @@ The OpenCompany Web Application provides a Web UI for creating and consuming ope
 
 ### OS Support
 
-Mac OSX, Windows (Linux coming soon)...
+MacOS and Windows (Linux coming soon)...
 
 
 ## Local Setup
 
 Prospective users of [Carrot](https://carrot.io/) should get started by going to [Carrot.io](https://carrot.io/). The following local setup is **for developers** wanting to work on the Web application.
 
-Most of the dependencies are internal, meaning [Boot](https://github.com/boot-clj/boot) will handle getting them for you. There are a few exceptions:
+Most of the dependencies are internal, meaning [Shadow-cljs]https://shadow-cljs.github.io/) will handle getting them for you. There are a few exceptions:
 
 * [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) - a Java 8 JRE is needed to run Clojure
-* [Boot](https://github.com/boot-clj/boot) - A Clojure build and dependency management tool
+* [Node LTE](https://nodejs.org/en/)
+* [NPM](https://npmjs.com) - A command line tool and package manager for Javascript
 
 #### Java
 
@@ -57,13 +58,14 @@ brew update
 brew cask install adoptopenjdk8
 ```
 
-#### Boot
+#### NPM
 
-Installing Boot is easy, for the most up to date instructions, check out the [Boot README](https://github.com/boot-clj/boot#install).
+Installing NPM is easy, for the most up to date instructions, check out the [Downloading & installing Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 You can verify your install with:
 
 ```console
-boot -V
+npm --version
+node --version
 ```
 
 ## Desktop Application Usage
@@ -74,32 +76,26 @@ and provides it with hooks for accessing native desktop features.
 
 The primary source files to be aware of when developing on the desktop application are:
 
-- [main.cljs](./src/oc/electron/main.cljs): _the main electron process is configured and launched here_
-- [renderer.js](./resources/electron/renderer.js): _the electron renderer process, which injects native features into the hosted Carrot web page_
-- [package.json](./resources/package.json): _node dependency manifest, and home of build/sign/publish configuration_
+- [main.cljs](./src/oc/main/electron/main.cljs): _the main electron process is configured and launched here_
+- [renderer.js](./public/electron/renderer.js): _the electron renderer process, which injects native features into the hosted Carrot web page_
+- [package.json](./package.json): _node dependency manifest, and home of build/sign/publish configuration_
 
 ### Developing locally
 
-Because the desktop application simply loads the Carrot web app, the steps to develop locally are largely the same.
-With your local Carrot environment running (i.e. `boot dev`), in a separate terminal, run:
+Because the desktop application simply loads the Carrot web app, you need the [web client](https://github.com/open-company/open-company-web) running
+on your system and serving files. Once that works and you can see the login page at [http://localhost:3559/login](http://localhost:3559/login) you are ready
+to start the Desktop app development.
+
+Run the following commands in this repo root folder:
 
 ```
-boot dev-electron
+npx shadow-cljs release desktopapp
+npm install
+npm run start
 ```
 
-This will compile the main electron process, and place the output in the `target/` directory. From there,
-we can launch the application:
-
-```
-cd target/
-yarn install
-yarn start
-```
-
-NB: you'll need to install the [yarn](https://yarnpkg.com) package manager for this to work.
-
-If all goes well, the desktop application should open in a new window, and load `localhost:3559`. Hot-reloading
-should work, so from here development is identical to the Carrot web app!
+If all goes well, the desktop application should open in a new window, and load `localhost:3559`.
+<!-- Hot-reloading should work, so from here development is identical to the Carrot web app! -->
 
 ### Packaging for deployment
 
@@ -119,8 +115,9 @@ if you so wish:
 
 ```
 cd target/
-yarn install
-yarn start
+npx shadow-cljs compile desktopapp
+npm install
+npm run start
 ```
 
 To actually distribute the application, we first need to package the app (DMG on Mac, EXE installer on Windows),
@@ -185,7 +182,8 @@ builds should be made from the `master` branch._
 ```
 boot prod-electron
 cd target/
-yarn install
+npx shadow-cljs release desktopapp
+npm install
 npx electron-builder -c.mac.type=distribution -c.mac.identity="OpenCompany, LLC (XXXXXXXXXX) --publish always"
 ```
 
@@ -205,8 +203,7 @@ To build on windows, you'll need to install a few tools:
 
 - [Java](https://www.java.com/en/download/)
 - [Node LTE](https://nodejs.org/en/)
-- [boot.exe](https://github.com/boot-clj/boot#windows)
-- [Yarn](https://yarnpkg.com)
+- [NPM](https://npmjs.com)
 - [Ruby](rubyinstaller.org/downloads)
 - [SASS](https://sass-lang.com/install)
 

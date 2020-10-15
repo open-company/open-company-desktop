@@ -7,7 +7,7 @@
 (goog-define web-origin "http://localhost:3559")
 (goog-define auth-origin "http://localhost:3003")
 (goog-define init-path "/login/desktop")
-(goog-define sentry-dsn "https://ecf4ef8092ae4638bf56c0cfa6d50bb0@o23653.ingest.sentry.io/4944452")
+(goog-define sentry-dsn false)
 
 ;; Setup sentry
 (def sentry (js/require "@sentry/electron"))
@@ -26,6 +26,7 @@
 
 (def app (.-app ^js electron))
 (def systemPreferences (.-systemPreferences ^js electron))
+(def native-theme (.-nativeTheme ^js electron))
 (def ipc-main (.-ipcMain ^js electron))
 (def session (.-session ^js electron))
 (def shell (.-shell ^js electron))
@@ -141,7 +142,7 @@
                                      (reset! main-window nil)
                                      (do (ocall % "preventDefault")
                                          (.hide ^js @main-window))))
-        (let [ui-theme-changed #(ocall @main-window "webContents.send" "ui-theme-changed" (.isDarkMode ^js systemPreferences))]
+        (let [ui-theme-changed #(ocall @main-window "webContents.send" "ui-theme-changed" (.-shouldUseDarkColors ^js native-theme))]
           (.on ^js systemPreferences "accent-color-changed" ui-theme-changed)
           (.subscribeNotification ^js systemPreferences "AppleInterfaceThemeChangedNotification" ui-theme-changed)
           (.on ^js systemPreferences "color-changed" ui-theme-changed)))))
@@ -174,5 +175,5 @@
                                           (let [ret-value (boolean (.getFocusedWindow ^js BrowserWindow))]
                                             (oset! event "returnValue" ret-value))))
   (.on ^js ipc-main "ui-theme-enabled?" (fn [event]
-                                          (let [ret-value (boolean (.isDarkMode ^js systemPreferences))]
+                                          (let [ret-value (boolean (.-shouldUseDarkColors ^js native-theme))]
                                             (oset! event "returnValue" ret-value)))))

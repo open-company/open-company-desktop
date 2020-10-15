@@ -36,7 +36,7 @@ window.OCCarrotDesktop.isDarkMode = function() {
 };
 
 window.OCCarrotDesktop.getElectronAppVersion = function() {
-  console.log("Get electorn app version");
+  console.log("Get electorn app version", package.version);
   return package.version;
 }
 
