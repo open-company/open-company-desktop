@@ -1,12 +1,8 @@
 // The renderer process of the Carrot electron app
 // https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes
-console.log("DBG renderer.js");
 var electron = require('electron');
-console.log("DBG   electorn", electron);
 var ipcRenderer = electron.ipcRenderer;
-console.log("DBG   ipcRenderer", ipcRenderer);
-var package = require('../package.json');
-console.log("DBG   package", package);
+var package = require('../../package.json');
 
 console.log("Carrot desktop engage!");
 

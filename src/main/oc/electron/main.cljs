@@ -7,7 +7,7 @@
 (goog-define web-origin "http://localhost:3559")
 (goog-define auth-origin "http://localhost:3003")
 (goog-define init-path "/login/desktop")
-(goog-define sentry-dsn false)
+(goog-define sentry-dsn "https://ecf4ef8092ae4638bf56c0cfa6d50bb0@o23653.ingest.sentry.io/4944452")
 
 ;; Setup sentry
 (def sentry (js/require "@sentry/electron"))
@@ -46,7 +46,6 @@
 
 (defn- load-page
   [window]
-  (js/console.log "DBG load-page:" init-url)
   (timbre/info "Loading " init-url)
   (ocall window "loadURL" init-url))
 
@@ -64,9 +63,9 @@
                        :minHeight (second min-win-dims)
                        :show show?
                        ;; Icon of Ubuntu/Linux. Other platforms are configured in package.json
-                       :icon (.join ^js path (.getAppPath ^js app) "carrot.iconset/icon_512x512.png")
+                       :icon (.join ^js path (.getAppPath ^js app) "public" "carrot.iconset" "icon_512x512.png")
                        :webPreferences #js {:enableRemoteModule false
-                                            :preload (.join ^js path (.getAppPath ^js app) "electron" "renderer.js")}
+                                            :preload (.join ^js path (.getAppPath ^js app) "public" "electron" "renderer.js")}
                        })))))
 
 (defn- set-csp
@@ -118,15 +117,9 @@
                     (ocall event "preventDefault")))))
          (.on ^js contents "new-window"
               (fn [event navigation-url & x]
-                (js/console.log "DBG navigation-url" navigation-url)
-                (js/console.log "DBG   event" event)
-                (js/console.log "DBG   args" x)
                 (let [parsed-url    (URL. navigation-url)
                       target-origin (.-origin ^js parsed-url)]
-                  (js/console.log "DBG   parsed-url:" parsed-url)
-                  (js/console.log "DBG   target-origin:" target-origin)
                   (timbre/info "Attempting to open new window at: " target-origin)
-                  (js/console.log "DBG   allowed?" (allowed-origin? target-origin))
                   (when-not (allowed-origin? target-origin)
                     (timbre/info "New window not whitelisted, opening in external browser")
                     (ocall event "preventDefault")
@@ -172,7 +165,7 @@
   (.on ^js app "ready" init-browser)
 
   ;; -- Inter-process Communication event handlers --
-  ;; see resources/electron/renderer.js
+  ;; see electron/renderer.js
   (.on ^js ipc-main "set-badge-count" (fn [event arg] (.setBadgeCount ^js app arg)))
   (.on ^js ipc-main "show-desktop-window" (fn [event arg]
                                             (when @main-window
