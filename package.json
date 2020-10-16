@@ -14,7 +14,7 @@
     "dist": "npx electron-builder",
     "dev:build": "npm ci && npx shadow-cljs compile desktopapp",
     "dev:watch": "npx shadow-cljs watch desktopapp",
-    "dev:clean": "rm -dfR node_modules/ public/js/* public/cljs-runtime"
+    "dev:clean": "rm -dfR node_modules/ public/js/* public/cljs-runtime dist/"
   },
   "build": {
     "appId": "io.carrot.desktop",
@@ -28,8 +28,8 @@
       ],
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
-      "entitlements": "electron/entitlements.mac.plist",
-      "entitlementsInherit": "electron/entitlements.mac.plist"
+      "entitlements": "public/electron/entitlements.mac.plist",
+      "entitlementsInherit": "public/electron/entitlements.mac.plist"
     },
     "dmg": {
       "sign": false
@@ -38,14 +38,14 @@
       "target": [
         "nsis"
       ],
-      "icon": "carrot.iconset/icon.ico"
+      "icon": "public/carrot.iconset/icon.ico"
     },
     "nsis": {
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     },
-    "afterSign": "electron/notarize.js",
-    "icon": "carrot.iconset/icon.icns",
+    "afterSign": "public/electron/notarize.js",
+    "icon": "public/carrot.iconset/icon.icns",
     "publish": [
       "github"
     ]
