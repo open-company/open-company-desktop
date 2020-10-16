@@ -89,7 +89,7 @@ to start the Desktop app development.
 Run the following commands in this repo root folder:
 
 ```
-npx shadow-cljs release desktopapp
+npx shadow-cljs compile desktopapp
 npm install
 npm run start
 ```
@@ -99,14 +99,12 @@ If all goes well, the desktop application should open in a new window, and load 
 
 ### Packaging for deployment
 
-There are two environments against which we can package the Carrot desktop app: staging and production:
+There are two environments against which we can package the Carrot desktop app: staging and production.
+To switch between the 2 comment or uncomment the relative variables group in the electron-builder.env file.
+Then run:
 
 ```
-# staging
-boot staging-electron
-
-# production
-boot prod-electron
+npx shadow-cljs release desktopapp
 ```
 
 Both of these commands result in a production-ready build located in the `target/` directory, and each
@@ -114,8 +112,6 @@ will load the respective Carrot web application upon launch. From here, you're f
 if you so wish:
 
 ```
-cd target/
-npx shadow-cljs compile desktopapp
 npm install
 npm run start
 ```
@@ -134,7 +130,7 @@ and download it to your local system. Place the file in a well known place (e.g.
 Next, we need to configure our environment with a few secrets:
 
 ```
-cp resources/electron-builder.example.env resources/electron-builder.env
+cp electron-builder.example.env electron-builder.env
 ```
 
 Edit this file appropriately. You can generate a GitHub token for yourself [here](https://github.com/settings/tokens). Make
@@ -157,9 +153,8 @@ git add .
 git commit -m "Bump desktop version"
 git push
 
-boot staging-electron
-cd target/
-yarn install
+npx shadow-cljs release desktopapp
+npm install
 npx electron-builder -c.mac.type=development -c.mac.provisioningProfile=/path/to/your/Carrot_MacOS_Development_Profile.provisionprofile --publish always
 ```
 
@@ -180,8 +175,6 @@ _Before performing this step, be sure that your changes have been fully merged i
 builds should be made from the `master` branch._
 
 ```
-boot prod-electron
-cd target/
 npx shadow-cljs release desktopapp
 npm install
 npx electron-builder -c.mac.type=distribution -c.mac.identity="OpenCompany, LLC (XXXXXXXXXX) --publish always"
@@ -213,9 +206,8 @@ _Before performing this step, be sure that your changes have been fully merged i
 builds should be made from the `master` branch._
 
 ```
-boot prod-electron-windows
-cd target/
-yarn install
+npx shadow-cljs release desktopapp
+npm install
 npx electron-builder --win --publish always
 ```
 
