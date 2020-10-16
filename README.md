@@ -146,8 +146,8 @@ of service and fully activate your account.
 This will produce a development build runnable by the devices specified in the supplied provisioning profile.
 
 ```
-# Bump the version in resources/package.json to X.Y.Z
-vim resources/package.json
+# Bump the version in package.json to X.Y.Z
+vim package.json
 
 git add .
 git commit -m "Bump desktop version"
@@ -164,7 +164,7 @@ NOTE: `/path/to/your/Carrot_MacOS_Development_Profile.provisionprofile` is the p
 Keep in mind that this can take a while (~10 minutes) due to requiring Apple's servers to notarize the application.
 
 This will build, sign, notarize, and publish a tagged draft release to [GitHub Releases](https://github.com/open-company/open-company-desktop/releases).
-The tag will match the version number specified in `resources/package.json`.
+The tag will match the version number specified in `package.json`.
 
 Because this is a development build in Apple's eyes, _it is only runnable by the devices included in the supplied provisioning profile._ You should
 not publish this build in the GitHub Release panel, and instead should distribute it to testers manually.
