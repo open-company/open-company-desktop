@@ -31,3 +31,4 @@ public/cljs-runtime/
 electron-builder.env
 
 index.js
+index.js.map
