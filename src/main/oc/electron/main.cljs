@@ -1,36 +1,28 @@
 (ns oc.electron.main
   (:require [oc.electron.auto-update :as auto-update]
             [oops.core :refer (ocall oset!)]
-            [taoensso.timbre :as timbre]))
+            [taoensso.timbre :as timbre]
+            ["path" :as path]
+            ["@sentry/electron" :as sentry]
+            ["url" :refer (URL)]
+            ["electron" :refer (systemPreferences app nativeTheme ipcMain session shell BrowserWindow)]))
 
 (goog-define dev? true)
 (goog-define web-origin "http://localhost:3559")
 (goog-define auth-origin "http://localhost:3003")
 (goog-define init-path "/login/desktop")
 (goog-define sentry-dsn false)
+(goog-define sentry-environment "")
 
 ;; Setup sentry
-(def sentry (js/require "@sentry/electron"))
 (when sentry-dsn
-  (.init ^js sentry #js {:dsn sentry-dsn}))
+  (.init ^js sentry #js {:dsn sentry-dsn :environment sentry-environment}))
 
 ;; Begin checking for updates
 (auto-update/start-update-cycle!)
 
 (def main-window (atom nil))
 (def quitting? (atom false))
-
-(def path (js/require "path"))
-(def URL (.-URL ^js (js/require "url")))
-(def electron (js/require "electron"))
-
-(def app (.-app ^js electron))
-(def systemPreferences (.-systemPreferences ^js electron))
-(def native-theme (.-nativeTheme ^js electron))
-(def ipc-main (.-ipcMain ^js electron))
-(def session (.-session ^js electron))
-(def shell (.-shell ^js electron))
-(def BrowserWindow (.-BrowserWindow ^js electron))
 
 (def init-url (str web-origin init-path))
 
@@ -142,7 +134,7 @@
                                      (reset! main-window nil)
                                      (do (ocall % "preventDefault")
                                          (.hide ^js @main-window))))
-        (let [ui-theme-changed #(ocall @main-window "webContents.send" "ui-theme-changed" (.-shouldUseDarkColors ^js native-theme))]
+        (let [ui-theme-changed #(ocall @main-window "webContents.send" "ui-theme-changed" (.-shouldUseDarkColors ^js nativeTheme))]
           (.on ^js systemPreferences "accent-color-changed" ui-theme-changed)
           (.subscribeNotification ^js systemPreferences "AppleInterfaceThemeChangedNotification" ui-theme-changed)
           (.on ^js systemPreferences "color-changed" ui-theme-changed)))))
@@ -167,13 +159,13 @@
 
   ;; -- Inter-process Communication event handlers --
   ;; see electron/renderer.js
-  (.on ^js ipc-main "set-badge-count" (fn [event arg] (.setBadgeCount ^js app arg)))
-  (.on ^js ipc-main "show-desktop-window" (fn [event arg]
-                                            (when @main-window
-                                              (.show ^js @main-window))))
-  (.on ^js ipc-main "window-has-focus?" (fn [event]
-                                          (let [ret-value (boolean (.getFocusedWindow ^js BrowserWindow))]
+  (.on ^js ipcMain "set-badge-count" (fn [event arg] (.setBadgeCount ^js app arg)))
+  (.on ^js ipcMain "show-desktop-window" (fn [event arg]
+                                           (when @main-window
+                                             (.show ^js @main-window))))
+  (.on ^js ipcMain "window-has-focus?" (fn [event]
+                                         (let [ret-value (boolean (.getFocusedWindow ^js BrowserWindow))]
                                             (oset! event "returnValue" ret-value))))
-  (.on ^js ipc-main "ui-theme-enabled?" (fn [event]
-                                          (let [ret-value (boolean (.-shouldUseDarkColors ^js native-theme))]
-                                            (oset! event "returnValue" ret-value)))))
+  (.on ^js ipcMain "ui-theme-enabled?" (fn [event]
+                                         (let [ret-value (boolean (.-shouldUseDarkColors ^js nativeTheme))]
+                                           (oset! event "returnValue" ret-value)))))
