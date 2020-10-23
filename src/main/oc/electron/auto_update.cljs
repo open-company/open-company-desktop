@@ -34,11 +34,11 @@
 (defn start-update-cycle!
   []
   (timbre/info "Starting desktop auto updater")
-  (ocall auto-updater "addListener" "update-available" on-update-available)
+  (ocall autoUpdater "addListener" "update-available" on-update-available)
   (interval/start-interval! auto-updater-interval))
 
 (defn stop-update-cycle!
   []
   (timbre/info "Stopping desktop auto updater")
-  (ocall auto-updater "removeListener" "update-available" on-update-available)
+  (ocall autoUpdater "removeListener" "update-available" on-update-available)
   (interval/stop-interval! auto-updater-interval))
