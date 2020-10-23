@@ -11,10 +11,9 @@
 
   Upon restarting the app, the update will be installed."
   (:require [taoensso.timbre :as timbre]
-            [oc.lib.cljs.interval :as interval]))
-
-;; See https://www.electron.build/auto-update for details on the `electron-updater` API
-(def auto-updater (.-autoUpdater (js/require "electron-updater")))
+            [oc.lib.cljs.interval :as interval]
+            [oops.core :refer (ocall)]
+            ["electron-updater" :refer (autoUpdater)]))
 
 (def default-rate-ms (* 5 60 1000)) ;; 5 minutes
 (def extended-rate-ms (* 24 60 60 1000)) ;; 24 hours
@@ -22,7 +21,7 @@
 (defn- check-for-updates
   []
   (timbre/info "Checking for desktop updates")
-  (.checkForUpdatesAndNotify auto-updater))
+  (.checkForUpdatesAndNotify autoUpdater))
 
 (defonce auto-updater-interval (interval/make-interval {:fn check-for-updates
                                                         :ms default-rate-ms}))
@@ -35,11 +34,11 @@
 (defn start-update-cycle!
   []
   (timbre/info "Starting desktop auto updater")
-  (.addListener auto-updater "update-available" on-update-available)
+  (ocall auto-updater "addListener" "update-available" on-update-available)
   (interval/start-interval! auto-updater-interval))
 
 (defn stop-update-cycle!
   []
   (timbre/info "Stopping desktop auto updater")
-  (.removeListener auto-updater "update-available" on-update-available)
+  (ocall auto-updater "removeListener" "update-available" on-update-available)
   (interval/stop-interval! auto-updater-interval))
