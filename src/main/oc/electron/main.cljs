@@ -166,6 +166,6 @@
   (.on ^js ipcMain "window-has-focus?" (fn [event]
                                          (let [ret-value (boolean (.getFocusedWindow ^js BrowserWindow))]
                                             (oset! event "returnValue" ret-value))))
-  (.on ^js ipcMain "ui-theme-enabled?" (fn [event]
-                                         (let [ret-value (boolean (.-shouldUseDarkColors ^js nativeTheme))]
-                                           (oset! event "returnValue" ret-value)))))
+  (.on ^js ipcMain "dark-theme-enabled?" (fn [event]
+                                           (let [ret-value (boolean (.-shouldUseDarkColors ^js nativeTheme))]
+                                             (oset! event "returnValue" ret-value)))))

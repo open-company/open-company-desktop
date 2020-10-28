@@ -32,7 +32,7 @@ window.OCCarrotDesktop.windowHasFocus = function() {
 
 window.OCCarrotDesktop.isDarkMode = function() {
   console.log("Determining if dark mode is enabled");
-  return ipcRenderer.sendSync('ui-theme-enabled?');
+  return ipcRenderer.sendSync('dark-theme-enabled?');
 };
 
 window.OCCarrotDesktop.getElectronAppVersion = function() {
@@ -42,5 +42,5 @@ window.OCCarrotDesktop.getElectronAppVersion = function() {
 
 ipcRenderer.on("ui-theme-changed", function(event, arg) {
   console.log("Dark mode changed:", arg);
-  oc.web.actions.ui_theme.set_ui_theme();
+  oc.web.actions.theme.desktop_theme_changed();
 });
