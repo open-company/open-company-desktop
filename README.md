@@ -177,7 +177,7 @@ builds should be made from the `master` branch._
 ```
 npx shadow-cljs release desktopapp
 npm install
-npx electron-builder -c.mac.type=distribution -c.mac.identity="OpenCompany, LLC (XXXXXXXXXX) --publish always"
+npx electron-builder -c.mac.type=distribution -c.mac.identity="OpenCompany, LLC (XXXXXXXXXX)" --publish always
 ```
 
 You can find the proper value for the `-c.mac.identity` value in your Mac Keychain.
