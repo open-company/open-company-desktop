@@ -24,6 +24,9 @@ forms-analyzed.txt
 
 .calva/
 .vscode/
+,clojure-lsp/
+.clj-kondo/
+.lsp/
 public/js/
 public/cljs-runtime/
 
