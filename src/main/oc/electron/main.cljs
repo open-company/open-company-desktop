@@ -81,6 +81,7 @@
 (def dropbox-origin "https://www.dropbox.com")
 (def onedrive-origin "https://login.live.com")
 (def box-origin "https://www.box.com")
+(def stripe-origin-re #"^https://.*\.stripe\.com$")
 
 (defn- allowed-origin?
   [o]
@@ -94,7 +95,8 @@
     (= o dropbox-origin)
     (= o onedrive-origin)
     (= o box-origin)
-    (re-matches slack-origin-re o)))
+    (re-matches slack-origin-re o)
+    (re-matches stripe-origin-re o)))
 
 (defn- prevent-navigation-external-to-carrot
   []
